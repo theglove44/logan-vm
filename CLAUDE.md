@@ -425,6 +425,98 @@ docker exec <service1> curl http://<service2>:<port>/
 - Review service logs for warnings or errors
 - Restart the service if unhealthy
 
+## Service Integration Troubleshooting
+
+### Sonarr/Radarr Not Finding Downloads (Prowlarr Integration Issue)
+
+**Symptoms:**
+- Requests successfully added to Sonarr/Radarr but no searches performed
+- All search results return empty, no downloads triggered
+- Requests stuck in "pending" status
+
+**Root Cause:** Incorrect API key configured in Sonarr/Radarr for Prowlarr communication
+
+**Verification:**
+```bash
+# Check if Prowlarr API is rejecting Sonarr/Radarr requests
+docker compose logs prowlarr --tail=50 | grep -i "401\|unauthorized"
+
+# Verify Prowlarr's actual API key
+docker compose exec prowlarr grep -oP '(?<=<ApiKey>)[^<]+' /config/config.xml
+```
+
+**Fix:**
+1. In Sonarr (http://10.0.0.74:8989):
+   - Settings → Indexers → Find Prowlarr indexer
+   - Click pencil icon to edit
+   - Update **API Key** to match Prowlarr's actual key (from command above)
+   - Click **Test** (should show "Success")
+   - Save
+
+2. In Radarr (http://10.0.0.74:7878):
+   - Settings → Indexers → Find Prowlarr indexer
+   - Click pencil icon to edit
+   - Update **API Key** to match Prowlarr's actual key
+   - Click **Test** (should show "Success")
+   - Save
+
+**Verification After Fix:**
+```bash
+# Test API connectivity from Sonarr
+docker compose exec sonarr curl -s -H "X-Api-Key: <PROWLARR_KEY>" \
+  http://prowlarr:9696/api/v1/indexer | head -20
+# Should return HTTP 200 with indexer list
+
+# Monitor logs for successful indexer queries
+docker compose logs sonarr --tail=20 | grep -i "indexer\|search"
+```
+
+### Overseerr Requests Not Processing
+
+**Symptoms:**
+- Requests submitted in Overseerr UI but fail immediately
+- Requests never reach Sonarr/Radarr
+
+**Root Cause:** Overseerr has incorrect API keys for Sonarr/Radarr
+
+**Fix:**
+1. In Overseerr (http://10.0.0.74:5155):
+   - Settings → Services → Radarr
+   - Update **API Key** to: `eb12ce387963477b826ed2bbba0aa6cd`
+   - Click **Test** (should show green checkmark)
+   - Save
+
+2. Settings → Services → Sonarr
+   - Update **API Key** to: `c13ee519d6004c5a94df8c8158c05b71`
+   - Click **Test** (should show green checkmark)
+   - Save
+
+**Reference:** See `INCIDENT-REPORTS/IR-2025-11-16-01-PROWLARR-API-FIX.md` for full technical details.
+
+### Homepage Dashboard Showing API Errors
+
+**Symptoms:**
+- Homepage widgets showing error messages
+- Plex, Sonarr, Radarr cards not displaying data
+- Connection errors in dashboard
+
+**Root Cause:** API keys in homepage configuration don't match service keys, or Docker socket permissions issue
+
+**Fix:**
+1. Verify API keys in docker-compose.yml environment section
+2. Homepage container needs Docker socket access: `user: "0:999"`
+3. Update API keys from service configuration files:
+   ```bash
+   # Get actual Sonarr key
+   docker compose exec sonarr grep -oP '(?<=<ApiKey>)[^<]+' /config/config.xml
+
+   # Get actual Radarr key
+   docker compose exec radarr grep -oP '(?<=<ApiKey>)[^<]+' /config/config.xml
+   ```
+4. Restart Homepage after fixing keys: `docker compose restart homepage`
+
+**Reference:** See `INCIDENT-REPORTS/IR-2025-11-16-00-HOMEPAGE-API-FIX.md` for full technical details.
+
 ## Development Notes
 
 - **No native source code**: This is a Docker composition repo, not a source project. All services are pre-built images from Docker Hub/GitHub Container Registry.

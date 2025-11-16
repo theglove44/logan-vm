@@ -1,0 +1,74 @@
+# Environment variables with secrets
+.env
+.env.local
+.env.*.local
+
+# Service configuration with sensitive data
+*/config/
+*/logs/
+*/cache/
+
+# Backup data
+/mnt/backup/
+backup/logs/
+
+# Container state files
+.dockerignore
+docker-compose.override.yml
+
+# IDE and local development
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.env.*.swp
+
+# Git temporary files
+*.orig
+.git/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# SSH keys and certificates
+*.pem
+*.key
+*.pub
+id_rsa*
+*.crt
+*.csr
+
+# Cloudflare credentials (from .env)
+CLOUDFLARE_*
+
+# API keys and tokens (from .env)
+*_API_KEY
+*_TOKEN
+*_PASSWORD
+*_PASSPHRASE
+*_SECRET
+
+# Plex claim tokens
+PLEX_CLAIM
+
+# Logging and temporary
+logs/
+*.log
+tmp/
+temp/
+
+# Docker volumes (not tracked by git typically)
+volumes/
+
+# Build artifacts
+dist/
+build/
+
+# Node modules if any frontend components exist
+node_modules/
+package-lock.json
+yarn.lock

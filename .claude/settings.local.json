@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:fmartinou.github.io)",
+      "WebFetch(domain:hub.docker.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:linuxiac.com)",
+      "WebFetch(domain:gadgeteer.co.za)",
+      "Bash(mkdir:*)",
+      "Bash(sudo mkdir:*)",
+      "Bash(sudo chown:*)",
+      "WebFetch(domain:code.claude.com)",
+      "Bash(ls:*)",
+      "Bash(docker exec:*)",
+      "Bash(getent passwd:*)",
+      "Bash(mount:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker run:*)",
+      "Bash(docker compose:*)",
+      "Bash(__NEW_LINE__ echo \"=== Testing Dashboard HTTP Response ===\")",
+      "Bash(curl:*)",
+      "Bash(__NEW_LINE__ echo \"=== Testing Service APIs ===\" echo \"\" echo \"Sonarr API Status:\" curl -s \"http://localhost:8989/api/v3/system/status?apikey=2d340925e5b741c4a856b07690fddc70\")",
+      "Bash(__NEW_LINE__ echo \"=== Testing Service APIs ===\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

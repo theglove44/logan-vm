@@ -115,6 +115,7 @@ services:
     volumes:
       - /opt/mediaserver/sabnzbd:/config
       - /mnt/storage/data/:/data
+      - /opt/mediaserver/scripts:/scripts:ro
     ports:
       - "8080:8080"
     labels:
@@ -160,6 +161,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - UMASK=${UMASK}
+      - SONARR_API_KEY=${HOMEPAGE_VAR_SONARR_API_KEY}  # expose API key for health check
     volumes:
       - /opt/mediaserver/sonarr:/config
       - /mnt/storage/data:/data
@@ -176,7 +178,7 @@ services:
       - sabnzbd
       - prowlarr
     healthcheck:
-      test: ["CMD", "bash", "-O", "extglob", "-c", "curl -fsS 'http://localhost:8989/api/v3/system/status?apikey=${HOMEPAGE_VAR_SONARR_API_KEY}' >/dev/null"]
+      test: ["CMD", "bash", "-O", "extglob", "-c", "curl -fsS 'http://localhost:8989/api/v3/system/status?apikey=c13ee519d6004c5a94df8c8158c05b71' >/dev/null"]
       interval: 30s
       timeout: 5s
       retries: 10
@@ -189,6 +191,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - UMASK=${UMASK}
+      - RADARR_API_KEY=${HOMEPAGE_VAR_RADARR_API_KEY}  # expose API key for health check
     volumes:
       - /opt/mediaserver/radarr:/config
       - /mnt/storage/data:/data
@@ -205,7 +208,7 @@ services:
       - sabnzbd
       - prowlarr
     healthcheck:
-      test: ["CMD", "bash", "-O", "extglob", "-c", "curl -fsS 'http://localhost:7878/api/v3/system/status?apikey=${HOMEPAGE_VAR_RADARR_API_KEY}' >/dev/null"]
+      test: ["CMD", "bash", "-O", "extglob", "-c", "curl -fsS 'http://localhost:7878/api/v3/system/status?apikey=eb12ce387963477b826ed2bbba0aa6cd' >/dev/null"]
       interval: 30s
       timeout: 5s
       retries: 10
@@ -293,9 +296,8 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:v0.9.13
     container_name: homepage
+    user: "0:999"  # root:docker group - required for Docker socket access
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
       - TZ=${TZ}
       # Host validation - allow requests from LAN IP (include port since exposed as 3001)
       - HOMEPAGE_ALLOWED_HOSTS=10.0.0.74:3001

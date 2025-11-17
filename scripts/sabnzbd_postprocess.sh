@@ -21,8 +21,9 @@ CATEGORY="$5"
 PP_STATUS="$6"
 STATUS_CODE="$7"
 
-# Logging - use host path, not container path
-LOG_FILE="/opt/mediaserver/sabnzbd/postprocess.log"
+# Logging - use container path that maps to host /opt/mediaserver/sabnzbd
+# Inside container: /config = host's /opt/mediaserver/sabnzbd
+LOG_FILE="/config/postprocess.log"
 
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" >> "$LOG_FILE"
@@ -37,10 +38,12 @@ if [ "$PP_STATUS" != "0" ]; then
     exit 1
 fi
 
-# Use host-level paths (not container paths) - this is the key to avoiding virtiofs issues
-# Container has /data, but host has /mnt/storage/data
-SOURCE_DIR="/mnt/storage/data/incomplete/$FOLDER"
-DEST_BASE="/mnt/storage/data/usenet"
+# When running as a notification script from inside the container:
+# - /data maps to host's /mnt/storage/data
+# - /config maps to host's /opt/mediaserver/sabnzbd
+# So we use container paths here
+SOURCE_DIR="/data/incomplete/$FOLDER"
+DEST_BASE="/data/usenet"
 
 log "Source: $SOURCE_DIR"
 log "Destination base: $DEST_BASE"

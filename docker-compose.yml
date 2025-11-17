@@ -1,39 +1,39 @@
 name: mediaserver
 services:
-  jellyfin:
-    image: jellyfin/jellyfin:latest
-    container_name: jellyfin
-    user: "${PUID}:${PGID}"
-    environment:
-      - TZ=${TZ}
-      # Reverse-proxy ready (optional labels for later)
-      - JELLYFIN_PublishedServerUrl=${HOST_LAN}
-    volumes:
-      - /opt/mediaserver/jellyfin/config:/config
-      - /opt/mediaserver/jellyfin/cache:/cache
-      - /mnt/storage/data/media:/media
-    ports:
-      - "8096:8096"    # HTTP
-      # - "8920:8920"  # HTTPS (enable if you terminate TLS here)
-      # DLNA/UPnP optional:
-      # - "1900:1900/udp"
-      # - "7359:7359/udp"
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      - "wud.watch=true"
-    networks:
-      - default
-    devices:
-      - /dev/dri:/dev/dri
-    group_add:
-      - "992"
-      - "44"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+  # jellyfin:
+  #   image: jellyfin/jellyfin:latest
+  #   container_name: jellyfin
+  #   user: "${PUID}:${PGID}"
+  #   environment:
+  #     - TZ=${TZ}
+  #     # Reverse-proxy ready (optional labels for later)
+  #     - JELLYFIN_PublishedServerUrl=${HOST_LAN}
+  #   volumes:
+  #     - /opt/mediaserver/jellyfin/config:/config
+  #     - /opt/mediaserver/jellyfin/cache:/cache
+  #     - /mnt/storage/data/media:/media
+  #   ports:
+  #     - "8096:8096"    # HTTP
+  #     # - "8920:8920"  # HTTPS (enable if you terminate TLS here)
+  #     # DLNA/UPnP optional:
+  #     # - "1900:1900/udp"
+  #     # - "7359:7359/udp"
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #     - "wud.watch=true"
+  #   networks:
+  #     - default
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #   group_add:
+  #     - "992"
+  #     - "44"
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 5
 
   plex:
     image: lscr.io/linuxserver/plex:latest
@@ -252,21 +252,21 @@ services:
     command: ["sync"]
     restart: "no"  # We'll run on-demand with: docker compose run --rm recyclarr
 
-  jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
-    environment:
-      - LOG_LEVEL=info
-      - TZ=${TZ}
-    volumes:
-      - /opt/mediaserver/jellyseerr:/app/config
-    ports:
-      - "5055:5055"
-    restart: unless-stopped
-    depends_on:
-      - jellyfin
-    networks:
-      - default
+  # jellyseerr:
+  #   image: fallenbagel/jellyseerr:latest
+  #   container_name: jellyseerr
+  #   environment:
+  #     - LOG_LEVEL=info
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - /opt/mediaserver/jellyseerr:/app/config
+  #   ports:
+  #     - "5055:5055"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - jellyfin
+  #   networks:
+  #     - default
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
@@ -307,8 +307,8 @@ services:
       - HOMEPAGE_VAR_SAB_API_KEY=${HOMEPAGE_VAR_SAB_API_KEY}
       - HOMEPAGE_VAR_TAUTULLI_API_KEY=${HOMEPAGE_VAR_TAUTULLI_API_KEY}
       - HOMEPAGE_VAR_PLEX_TOKEN=${HOMEPAGE_VAR_PLEX_TOKEN}
-      - JELLYFIN_TOKEN=${JELLYFIN_TOKEN}
-      - HOMEPAGE_VAR_JELLYFIN_KEY=${JELLYFIN_TOKEN}
+      # - JELLYFIN_TOKEN=${JELLYFIN_TOKEN}
+      # - HOMEPAGE_VAR_JELLYFIN_KEY=${JELLYFIN_TOKEN}
     volumes:
       - /opt/mediaserver/homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -320,7 +320,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - jellyfin
+      # - jellyfin
       - plex
       - sonarr
       - radarr
@@ -333,45 +333,45 @@ services:
       timeout: 5s
       retries: 10
 
-  jellyplex-watched:
-    image: luigi311/jellyplex-watched:latest
-    container_name: jellyplex-watched
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      # App config
-      - DRYRUN=False
-      - DEBUG_LEVEL=DEBUG
-      - RUN_ONLY_ONCE=False
-      - SLEEP_DURATION=300
-      # Persist logs/marks to mounted path
-      - LOG_FILE=/config/log.log
-      - MARK_FILE=/config/mark.log
-      # Plex (host network container) — access via host gateway
-      - PLEX_BASEURL=https://plex.w0lverine.uk
-      - PLEX_TOKEN=${HOMEPAGE_VAR_PLEX_TOKEN}
-      # Jellyfin (same compose network) — access via service name
-      - JELLYFIN_BASEURL=https://jellyfin.w0lverine.uk
-      - JELLYFIN_TOKEN=${JELLYFIN_TOKEN}
-      # Only Plex <-> Jellyfin syncing enabled by default
-      - SYNC_FROM_PLEX_TO_PLEX=False
-      - SYNC_FROM_PLEX_TO_EMBY=False
-      - SYNC_FROM_JELLYFIN_TO_EMBY=False
-      - SYNC_FROM_EMBY_TO_PLEX=False
-      - SYNC_FROM_EMBY_TO_JELLYFIN=False
-      - SYNC_FROM_EMBY_TO_EMBY=False
-    volumes:
-      - /opt/mediaserver/jellyplex-watched:/config
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-      - "plex.w0lverine.uk:172.18.0.16"
-      - "jellyfin.w0lverine.uk:172.18.0.16"
-    restart: unless-stopped
-    depends_on:
-      - plex
-      - jellyfin
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+  # jellyplex-watched:
+  #   image: luigi311/jellyplex-watched:latest
+  #   container_name: jellyplex-watched
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     # App config
+  #     - DRYRUN=False
+  #     - DEBUG_LEVEL=DEBUG
+  #     - RUN_ONLY_ONCE=False
+  #     - SLEEP_DURATION=300
+  #     # Persist logs/marks to mounted path
+  #     - LOG_FILE=/config/log.log
+  #     - MARK_FILE=/config/mark.log
+  #     # Plex (host network container) — access via host gateway
+  #     - PLEX_BASEURL=https://plex.w0lverine.uk
+  #     - PLEX_TOKEN=${HOMEPAGE_VAR_PLEX_TOKEN}
+  #     # Jellyfin (same compose network) — access via service name
+  #     # - JELLYFIN_BASEURL=https://jellyfin.w0lverine.uk
+  #     # - JELLYFIN_TOKEN=${JELLYFIN_TOKEN}
+  #     # Only Plex <-> Jellyfin syncing enabled by default
+  #     - SYNC_FROM_PLEX_TO_PLEX=False
+  #     - SYNC_FROM_PLEX_TO_EMBY=False
+  #     - SYNC_FROM_JELLYFIN_TO_EMBY=False
+  #     - SYNC_FROM_EMBY_TO_PLEX=False
+  #     - SYNC_FROM_EMBY_TO_JELLYFIN=False
+  #     - SYNC_FROM_EMBY_TO_EMBY=False
+  #   volumes:
+  #     - /opt/mediaserver/jellyplex-watched:/config
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #     - "plex.w0lverine.uk:172.18.0.16"
+  #     # - "jellyfin.w0lverine.uk:172.18.0.16"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - plex
+  #     # - jellyfin
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.enable=true"
 
   fail2ban:
     image: crazymax/fail2ban:latest

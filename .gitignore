@@ -72,3 +72,31 @@ build/
 node_modules/
 package-lock.json
 yarn.lock
+
+# Ignore generated diagnostic summaries
+DIAGNOSTIC_REPORT.md
+DIAGNOSTIC_REPORTS/
+INCIDENT-REPORTS/
+INCIDENT_REPORTS/
+QUICK_FIX_REFERENCE.txt
+SABNZBD_INVESTIGATION_SUMMARY.md
+SABNZBD_NFS_DIAGNOSIS.md
+SABNZBD_NFS_FIX_PLAN.md
+
+# Ignore runtime data/config for managed services
+backup/
+bazarr/
+homepage/
+jellyfin/
+jellyplex-watched/
+jellyseerr/
+overseerr/
+pihole/
+plex/
+prowlarr/
+radarr/
+recyclarr/
+sabnzbd/
+sonarr/
+tautulli/
+wud/

@@ -24,7 +24,16 @@
       "Bash(__NEW_LINE__ echo \"=== Testing Dashboard HTTP Response ===\")",
       "Bash(curl:*)",
       "Bash(__NEW_LINE__ echo \"=== Testing Service APIs ===\" echo \"\" echo \"Sonarr API Status:\" curl -s \"http://localhost:8989/api/v3/system/status?apikey=2d340925e5b741c4a856b07690fddc70\")",
-      "Bash(__NEW_LINE__ echo \"=== Testing Service APIs ===\")"
+      "Bash(__NEW_LINE__ echo \"=== Testing Service APIs ===\")",
+      "Bash(cat:*)",
+      "Bash(zcat:*)",
+      "Bash(docker network inspect:*)",
+      "Bash(sqlite3:*)",
+      "Bash(fuser:*)",
+      "Bash(journalctl:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

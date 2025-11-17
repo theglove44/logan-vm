@@ -333,6 +333,29 @@ services:
       timeout: 5s
       retries: 10
 
+  apprise:
+    image: lscr.io/linuxserver/apprise-api:latest
+    container_name: apprise
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /opt/mediaserver/apprise/config:/config
+      - /opt/mediaserver/apprise/attachments:/attachments
+    ports:
+      - "8338:8000"
+    networks:
+      - default
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
   # jellyplex-watched:
   #   image: luigi311/jellyplex-watched:latest
   #   container_name: jellyplex-watched
@@ -420,7 +443,7 @@ services:
     environment:
       - TZ=Europe/London
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=discord://JEFJGh8jQNjrH6V8t6IsvE41olupuu2XPMPfp2t7uKvZ4LvbhTw5VcbRJcj2kRiSrgVp@1411600579880550460
+      - WATCHTOWER_NOTIFICATION_URL=http://apprise:8000/notify?tag=updates
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info        # startup + updates + warnings/errors
       - WATCHTOWER_NOTIFICATION_REPORT=true        # send a summary every run (even 0 updates)
       - WATCHTOWER_NOTIFICATION_TITLE_TAG=watchtower@mediaserver
@@ -445,7 +468,7 @@ services:
       - WUD_WATCHER_LOCAL_SOCKET=/var/run/docker.sock
       - WUD_WATCHER_LOCAL_CRON=0 */6 * * *
       # Discord notifications (individual messages per container update)
-      - WUD_TRIGGER_DISCORD_1_URL=discord://JEFJGh8jQNjrH6V8t6IsvE41olupuu2XPMPfp2t7uKvZ4LvbhTw5VcbRJcj2kRiSrgVp@1411600579880550460
+      - WUD_TRIGGER_DISCORD_1_URL=http://apprise:8000/notify?tag=updates
       - WUD_TRIGGER_DISCORD_1_BOTUSERNAME=WUD
       - WUD_TRIGGER_DISCORD_1_MODE=simple
       - WUD_TRIGGER_DISCORD_1_ONCE=false

@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"jellyseerr.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/05b46423d92394983d6a54c3f83d5b8bf588",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:31Z",
+				"end": "2026-01-22T05:54:20Z"
+			},
+			"_uniqueIdentifier": "jw0TovYuftFQbDMYOF1ZjiNykco.BbRkI9kjlJg9alTD-D1bi_WI",
+			"_retryAfter": "2025-11-22T14:57:58.19036802Z",
+			"_selectedTime": "2026-01-21T02:05:15Z"
+		}
+	}
+}

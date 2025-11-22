@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"jellyfin.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/05f72a50027472e2baa17227c51d9b2424a6",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:31Z",
+				"end": "2026-01-22T05:54:20Z"
+			},
+			"_uniqueIdentifier": "rkie3IcdRKBv2qLlYHQEeMKcAIA.BfcqUAJ0cuK6oXInxR2bJCSm",
+			"_retryAfter": "2025-11-22T14:57:58.441635891Z",
+			"_selectedTime": "2026-01-20T22:25:18Z"
+		}
+	}
+}

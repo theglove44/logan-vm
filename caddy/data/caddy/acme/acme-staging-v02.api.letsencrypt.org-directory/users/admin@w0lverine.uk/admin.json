@@ -1,0 +1,8 @@
+{
+	"status": "valid",
+	"contact": [
+		"mailto:admin@w0lverine.uk"
+	],
+	"termsOfServiceAgreed": true,
+	"location": "https://acme-staging-v02.api.letsencrypt.org/acme/acct/244987253"
+}

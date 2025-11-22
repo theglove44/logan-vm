@@ -51,7 +51,7 @@ services:
       # Tip: set `PLEX_CLAIM=claim-xxxx` in `.env`, then restart just the plex service
       - PLEX_CLAIM=${PLEX_CLAIM:-}
       # Force clients (esp. tvOS/web) to prefer the public domain + local fallback
-      - ADVERTISE_IP=http://10.0.0.74:32400,https://10-0-0-74.9cc05cc3c9c14a059b2a0222e067e786.plex.direct:32400
+      - ADVERTISE_IP=https://plex.w0lverine.uk,http://10.0.0.79:32400
 
     volumes:
       - /opt/mediaserver/plex/config:/config     # <-- change to your preferred config path
@@ -300,7 +300,7 @@ services:
     environment:
       - TZ=${TZ}
       # Host validation - allow requests from LAN IP (include port since exposed as 3001)
-      - HOMEPAGE_ALLOWED_HOSTS=10.0.0.74:3001
+      - HOMEPAGE_ALLOWED_HOSTS=10.0.0.79:3001
       # Pass through API keys for widgets
       - HOMEPAGE_VAR_SONARR_API_KEY=${HOMEPAGE_VAR_SONARR_API_KEY}
       - HOMEPAGE_VAR_RADARR_API_KEY=${HOMEPAGE_VAR_RADARR_API_KEY}
@@ -526,6 +526,35 @@ services:
       && mkdir -p /etc/rclone /root/.config/rclone \
       && if [ -f /config/rclone/rclone.conf ]; then cp /config/rclone/rclone.conf /etc/rclone/rclone.conf && cp /config/rclone/rclone.conf /root/.config/rclone/rclone.conf; else echo 'rclone.conf missing; run rclone config'; fi \
       && crond -f -d 8"
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    user: "${PUID}:${PGID}"
+    environment:
+      - TZ=${TZ}
+      - CADDY_ADMIN_PASSWORD_HASH=${CADDY_ADMIN_PASSWORD_HASH}
+    volumes:
+      - /opt/mediaserver/caddy/config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/mediaserver/caddy/data:/data
+      - /opt/mediaserver/caddy/logs:/var/log/caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - default
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "wud.watch=true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 volumes:
   borg-cache:

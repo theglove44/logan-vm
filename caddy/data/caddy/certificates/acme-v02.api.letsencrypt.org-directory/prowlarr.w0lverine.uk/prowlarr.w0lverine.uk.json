@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"prowlarr.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/0584fffa7e9797df7b91776cb0085ca17533",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:41Z",
+				"end": "2026-01-22T05:54:30Z"
+			},
+			"_uniqueIdentifier": "rkie3IcdRKBv2qLlYHQEeMKcAIA.BYT_-n6Xl997kXdssAhcoXUz",
+			"_retryAfter": "2025-11-22T14:58:09.417775913Z",
+			"_selectedTime": "2026-01-21T12:14:39Z"
+		}
+	}
+}

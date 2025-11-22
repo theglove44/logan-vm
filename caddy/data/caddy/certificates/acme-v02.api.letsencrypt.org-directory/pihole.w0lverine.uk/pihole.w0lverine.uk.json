@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"pihole.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/0509ac7c955ee57849653cef1013695e1edd",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:31Z",
+				"end": "2026-01-22T05:54:21Z"
+			},
+			"_uniqueIdentifier": "rkie3IcdRKBv2qLlYHQEeMKcAIA.BQmsfJVe5XhJZTzvEBNpXh7d",
+			"_retryAfter": "2025-11-22T14:57:59.857757909Z",
+			"_selectedTime": "2026-01-21T16:18:09Z"
+		}
+	}
+}

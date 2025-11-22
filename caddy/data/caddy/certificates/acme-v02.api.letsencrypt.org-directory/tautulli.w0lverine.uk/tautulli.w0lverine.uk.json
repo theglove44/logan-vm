@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"tautulli.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/0507b78f6b075044de23ee57ecb4ce019b3b",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:41Z",
+				"end": "2026-01-22T05:54:30Z"
+			},
+			"_uniqueIdentifier": "rkie3IcdRKBv2qLlYHQEeMKcAIA.BQe3j2sHUETeI-5X7LTOAZs7",
+			"_retryAfter": "2025-11-22T14:58:07.62951824Z",
+			"_selectedTime": "2026-01-20T19:25:29Z"
+		}
+	}
+}

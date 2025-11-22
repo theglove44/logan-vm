@@ -1,0 +1,19 @@
+{
+	"sans": [
+		"overseerr.w0lverine.uk"
+	],
+	"issuer_data": {
+		"url": "https://acme-v02.api.letsencrypt.org/acme/cert/05e509f616b86b9498d9a94ef1949216ef46",
+		"ca": "https://acme-v02.api.letsencrypt.org/directory",
+		"account": "https://acme-v02.api.letsencrypt.org/acme/acct/2819056736",
+		"renewal_info": {
+			"suggestedWindow": {
+				"start": "2026-01-20T10:43:31Z",
+				"end": "2026-01-22T05:54:21Z"
+			},
+			"_uniqueIdentifier": "rkie3IcdRKBv2qLlYHQEeMKcAIA.BeUJ9ha4a5SY2alO8ZSSFu9G",
+			"_retryAfter": "2025-11-22T14:58:00.124637522Z",
+			"_selectedTime": "2026-01-22T01:51:57Z"
+		}
+	}
+}

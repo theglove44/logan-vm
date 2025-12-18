@@ -12,7 +12,7 @@ This is a Docker Compose-based media server setup that orchestrates multiple ser
 - **Indexers/Downloaders**: Prowlarr (indexer), SABnzbd (usenet downloader), Radarr/Sonarr (movie/TV managers)
 - **Utilities**: Bazarr (subtitles), Tautulli (Plex analytics), Recyclarr (quality profile management), JellyPlex-Watched (sync watched status)
 - **Request Management**: Overseerr (Plex requests), Jellyseerr (Jellyfin requests)
-- **Infrastructure**: Watchtower (auto-updates), Fail2ban (brute-force protection), Pi-hole (DNS filtering), Borgmatic (backups), FileBrowser (file management)
+- **Infrastructure**: Watchtower (auto-updates), Fail2ban (brute-force protection), Pi-hole (DNS filtering), Borgmatic (backups)
 
 ## Common Commands
 
@@ -171,7 +171,6 @@ Unhealthy containers can be identified with `docker compose ps`.
 | Bazarr | 6767 | 6767 | Subtitle manager UI |
 | Tautulli | 8181 | 8181 | Plex analytics UI |
 | Pi-hole | 8088 | 80 | DNS admin UI |
-| FileBrowser | 8095 | 80 | File management UI |
 
 ### With Caddy Reverse Proxy (Planned)
 | Service | HTTPS Domain | Use |
@@ -187,7 +186,6 @@ Unhealthy containers can be identified with `docker compose ps`.
 | SABnzbd | sabnzbd.w0lverine.uk | Downloader (basic auth + LAN) |
 | Bazarr | bazarr.w0lverine.uk | Subtitles (basic auth + LAN) |
 | Tautulli | tautulli.w0lverine.uk | Analytics (basic auth + LAN) |
-| FileBrowser | filebrowser.w0lverine.uk | File management (DNS-only) |
 | Caddy | 80, 443 | Reverse proxy & HTTPS termination |
 
 Plex uses host networking to avoid port conflicts; all others use bridge networking on `media_net`.
@@ -312,99 +310,6 @@ docker compose up -d --no-deps --build homepage
 ```
 
 Note: Homepage is pinned to `v0.9.13` (stable) to avoid breaking changes in newer versions. Monitor releases at https://github.com/gethomepage/homepage/releases before upgrading.
-
-## FileBrowser
-
-**FileBrowser** provides web-based file management for the entire media server storage hierarchy with full read/write capabilities.
-
-### Quick Access
-- **URL**: http://10.0.0.79:8095 (or https://filebrowser.w0lverine.uk via Caddy)
-- **Image**: `filebrowser/filebrowser:latest`
-- **Container Name**: filebrowser
-- **Port Mapping**: `8095:80` (host:container)
-
-### Features
-- **Full Storage Access**: Browse, search, and manage all files in `/mnt/storage`
-- **File Operations**: Upload, download, edit, rename, move, delete
-- **Search**: Fast full-text search across filesystem
-- **User Management**: Multi-user support with granular permissions
-- **Authentication**: Username/password required (randomly generated on first start)
-
-### Configuration
-- **Database**: `/opt/mediaserver/filebrowser/database.db` (BoltDB)
-- **Root Path**: `/srv` (maps to `/mnt/storage` on host)
-
-### Initial Setup
-
-On first deployment, FileBrowser generates a random admin password displayed once in logs:
-
-```bash
-# Capture the generated password (IMPORTANT: Only shown once!)
-docker compose logs filebrowser | grep -i "admin\|password"
-```
-
-**First Login:**
-1. Navigate to http://10.0.0.79:8095
-2. Username: `admin`
-3. Password: `<from logs>`
-4. **Immediately change password**: User Icon → Settings → Profile → Password
-
-### Common Commands
-
-```bash
-# Access shell
-docker compose exec filebrowser sh
-
-# Reset admin password
-docker compose exec filebrowser filebrowser users update admin --password="new_password"
-
-# List users
-docker compose exec filebrowser filebrowser users ls
-
-# Create new user with restricted access
-docker compose exec filebrowser filebrowser users add username password --scope=/srv/media
-
-# Backup database
-docker compose exec filebrowser cp /database/filebrowser.db /config/filebrowser.db.backup
-
-# Health check
-curl -f http://localhost:8095/health
-
-# View logs
-docker compose logs filebrowser --tail=20
-
-# Restart service
-docker compose restart filebrowser
-```
-
-### Security Notes
-- **Authentication**: Required for all access (username/password)
-- **LAN Access**: Accessible on local network via port 8095
-- **HTTPS Access**: Via Caddy at filebrowser.w0lverine.uk (DNS-only, no port forwarding)
-- **Permissions**: Runs as PUID:PGID (1000:1000), respects host filesystem permissions
-- **Recommendation**: Change default admin password immediately after first login
-
-### Future: Caddy Reverse Proxy Integration
-
-When Caddy integration is complete, add to `/opt/mediaserver/caddy/config/Caddyfile`:
-
-```caddyfile
-# FileBrowser - file management (DNS-only, no basic auth - uses own login)
-filebrowser.w0lverine.uk {
-  reverse_proxy filebrowser:80
-  encode gzip
-}
-```
-
-Then reload Caddy:
-```bash
-docker compose exec caddy caddy reload
-```
-
-Update Homepage href:
-```yaml
-href: https://filebrowser.w0lverine.uk  # Changed from http://10.0.0.79:8095
-```
 
 ## Networking
 

@@ -357,76 +357,6 @@ services:
       timeout: 5s
       retries: 10
 
-  docker-socket-proxy:
-    image: tecnativa/docker-socket-proxy:latest
-    container_name: docker-socket-proxy
-    environment:
-      # Grant read-only access to necessary APIs for LoggiFly
-      - CONTAINERS=1
-      - EVENTS=1
-      - IMAGES=1
-      - INFO=1
-      - LOG=1
-      - NETWORKS=1
-      - SERVICES=1
-      - SWARM=1
-      - VERSION=1
-      # Disable write operations for security
-      - POST=0
-      - ALLOW_START=0
-      - ALLOW_STOP=0
-      - ALLOW_RESTART=0
-    volumes:
-      # Mount Docker socket (read-only)
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - default
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O-", "http://localhost:2375/_ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-
-  loggifly:
-    image: ghcr.io/clemcer/loggifly:latest
-    container_name: loggifly
-    # Connect to Docker via socket-proxy (secure, read-only access)
-    environment:
-      - TZ=${TZ}
-      - DOCKER_HOST=tcp://docker-socket-proxy:2375
-      - CONFIG_FILE=/config/config.yaml
-      - LOG_LEVEL=INFO
-    volumes:
-      # LoggiFly configuration
-      - /opt/mediaserver/loggifly/config:/config
-      # Log file access (read-only)
-      - /opt/mediaserver/sonarr/logs:/logs/sonarr:ro
-      - /opt/mediaserver/radarr/logs:/logs/radarr:ro
-      - /opt/mediaserver/prowlarr/logs:/logs/prowlarr:ro
-      - /opt/mediaserver/sabnzbd/logs:/logs/sabnzbd:ro
-      - /opt/mediaserver/overseerr/logs:/logs/overseerr:ro
-      - /opt/mediaserver/tautulli/logs:/logs/tautulli:ro
-      - /opt/mediaserver/homepage/config/logs:/logs/homepage:ro
-      - /opt/mediaserver/bazarr/logs:/logs/bazarr:ro
-      - /opt/mediaserver/caddy/logs:/logs/caddy:ro
-      - /opt/mediaserver/plex/config/Library/Application Support/Plex Media Server/Logs:/logs/plex:ro
-    networks:
-      - default
-    restart: unless-stopped
-    depends_on:
-      - apprise
-      - docker-socket-proxy
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    mem_limit: 256m
-    healthcheck:
-      test: ["CMD", "test", "-f", "/config/config.yaml"]
-      interval: 60s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
-
   # jellyplex-watched:
   #   image: luigi311/jellyplex-watched:latest
   #   container_name: jellyplex-watched
@@ -625,34 +555,6 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
-
-  filebrowser:
-    image: filebrowser/filebrowser:latest
-    container_name: filebrowser
-    user: "${PUID}:${PGID}"
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - UMASK=${UMASK}
-    volumes:
-      - /opt/mediaserver/filebrowser:/config
-      - /opt/mediaserver/filebrowser/database.db:/database/filebrowser.db
-      - /mnt/storage:/srv
-    ports:
-      - "8095:80"
-    networks:
-      - default
-    restart: unless-stopped
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      - "wud.watch=true"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
       start_period: 10s
 
 volumes:

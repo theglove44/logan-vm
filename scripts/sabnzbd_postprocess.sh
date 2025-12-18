@@ -39,10 +39,11 @@ if [ "$PP_STATUS" != "0" ]; then
 fi
 
 # When running as a notification script from inside the container:
+# - /incomplete (in container) maps to host's /opt/mediaserver/sabnzbd/incomplete
 # - /data maps to host's /mnt/storage/data
 # - /config maps to host's /opt/mediaserver/sabnzbd
 # So we use container paths here
-SOURCE_DIR="/data/incomplete/$FOLDER"
+SOURCE_DIR="/incomplete/$FOLDER"
 DEST_BASE="/data/usenet"
 
 log "Source: $SOURCE_DIR"

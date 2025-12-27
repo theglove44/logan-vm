@@ -655,6 +655,32 @@ services:
       retries: 10
       start_period: 10s
 
+  discord-bot:
+    build: /opt/mediaserver/discord-bot
+    container_name: discord-claude-bot
+    restart: unless-stopped
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ALLOWED_USERS=${ALLOWED_USERS:-}
+      - LOG_LEVEL=INFO
+    volumes:
+      - /var/log:/var/log:ro
+      - /opt/mediaserver:/opt/mediaserver:ro
+      - /mnt/storage:/mnt/storage:ro
+      - /opt/mediaserver/discord-bot/logs:/app/logs
+    networks:
+      - default
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "wud.watch=true"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import os; exit(0 if os.path.exists('/app/logs/bot.log') else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
 volumes:
   borg-cache:
   borg-config:

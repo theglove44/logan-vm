@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  discord-bot:
+    build: .
+    container_name: discord-claude-bot
+    restart: unless-stopped
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ALLOWED_USERS=${ALLOWED_USERS:-}
+      - LOG_LEVEL=INFO
+    volumes:
+      - /var/log:/var/log:ro
+      - /opt/mediaserver:/opt/mediaserver:ro
+      - /mnt/storage:/mnt/storage:ro
+      - ./logs:/app/logs
+    networks:
+      - media_net
+    depends_on:
+      - sonarr
+      - radarr
+      - jellyfin
+
+networks:
+  media_net:
+    external: true

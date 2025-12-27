@@ -100,3 +100,5 @@ sabnzbd/
 sonarr/
 tautulli/
 wud/
+discord-bot/.env
+discord-bot/venv/

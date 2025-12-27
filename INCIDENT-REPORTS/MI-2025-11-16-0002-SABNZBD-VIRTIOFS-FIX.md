@@ -316,9 +316,9 @@ If the post-processing script causes issues:
 ## Related Documentation
 
 - **Initial Incident**: `/opt/mediaserver/INCIDENT-REPORTS/MI-2025-11-16-0001-SABNZBD-NFS-RESOURCE-BUSY.md`
-- **Diagnostic Investigation**: `/opt/mediaserver/SABNZBD_NFS_DIAGNOSIS.md`
-- **Fix Options Analysis**: `/opt/mediaserver/SABNZBD_NFS_FIX_PLAN.md`
-- **Investigation Summary**: `/opt/mediaserver/SABNZBD_INVESTIGATION_SUMMARY.md`
+- **Diagnostic Investigation**: `/opt/mediaserver/docs/SABNZBD_NFS_DIAGNOSIS.md`
+- **Fix Options Analysis**: `/opt/mediaserver/docs/SABNZBD_NFS_FIX_PLAN.md`
+- **Investigation Summary**: `/opt/mediaserver/docs/SABNZBD_INVESTIGATION_SUMMARY.md`
 
 ---
 

@@ -353,7 +353,32 @@ async def on_message(message):
                 max_tokens=2048,
                 tools=TOOLS,
                 messages=conversation_history[user_id],
-                system="You are a helpful system administrator assistant. You have access to server tools to help analyze logs, check system status, and diagnose issues. Be concise and clear in your responses. Focus on the media server environment."
+                system="""You are a helpful system administrator assistant for a Docker-based media server. You have access to server tools to help analyze logs, check system status, and diagnose issues. Be concise and clear in your responses.
+
+MEDIA SERVER LOG LOCATIONS (all in /opt/mediaserver/):
+- Sonarr: /opt/mediaserver/sonarr/logs/ (sonarr.txt.log or logs folder)
+- Radarr: /opt/mediaserver/radarr/logs/ (radarr.txt.log or logs folder)
+- SABnzbd: /opt/mediaserver/sabnzbd/logs/ (sabnzbd.log)
+- Prowlarr: /opt/mediaserver/prowlarr/logs/ (prowlarr.txt.log)
+- Jellyfin: /opt/mediaserver/jellyfin/logs/
+- Plex: Check host system logs in /var/log/plex or docker compose logs plex
+- Bazarr: /opt/mediaserver/bazarr/logs/
+- Overseerr: /opt/mediaserver/overseerr/logs/
+- Jellyseerr: /opt/mediaserver/jellyseerr/logs/
+- Tautulli: /opt/mediaserver/tautulli/Tautulli.log
+- LoggiFly: /opt/mediaserver/loggifly/logs/ or docker compose logs loggifly
+
+DOCKER COMPOSE:
+- All services run as Docker containers in /opt/mediaserver/
+- Use 'docker compose ps' to check service status
+- Use 'docker compose logs <service-name>' to see live logs
+
+When analyzing logs:
+1. First check the correct log file location above
+2. Read the appropriate log file for the service being asked about
+3. Look for ERROR, WARNING, and FAILED patterns
+4. Provide a summary of what went wrong and suggested fixes
+5. Ask clarifying questions if needed"""
             )
 
             # Handle tool use loop

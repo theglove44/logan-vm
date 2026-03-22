@@ -114,7 +114,7 @@ services:
       - UMASK=${UMASK}
     volumes:
       - /opt/mediaserver/sabnzbd:/config
-      - /opt/mediaserver/sabnzbd/incomplete:/incomplete
+      - /mnt/storage/data/downloads/incomplete:/incomplete
       - /mnt/storage/data/:/data
       - /opt/mediaserver/scripts:/scripts:ro
     ports:
@@ -214,33 +214,33 @@ services:
       timeout: 5s
       retries: 10
 
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - UMASK=${UMASK}
-    volumes:
-      - /opt/mediaserver/bazarr:/config
-      - /mnt/storage/data/media:/media
-    ports:
-      - "6767:6767"
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - default
-    restart: unless-stopped
-    depends_on:
-      - sonarr
-      - radarr
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6767/system/status"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
-
+  # bazarr:
+  #  image: lscr.io/linuxserver/bazarr:latest
+  #  container_name: bazarr
+  #  environment:
+  #    - PUID=${PUID}
+  #    - PGID=${PGID}
+  #    - TZ=${TZ}
+  #    - UMASK=${UMASK}
+  #  volumes:
+  #    - /opt/mediaserver/bazarr:/config
+  #    - /mnt/storage/data/media:/media
+  #  ports:
+  #    - "6767:6767"
+  #  labels:
+  #    - "com.centurylinklabs.watchtower.enable=true"
+  #  networks:
+  #    - default
+  #  restart: unless-stopped
+  #  depends_on:
+  #    - sonarr
+  #    - radarr
+  #  healthcheck:
+  #    test: ["CMD", "curl", "-f", "http://localhost:6767/system/status"]
+  #    interval: 30s
+  #    timeout: 5s
+  #    retries: 10
+  #
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
     container_name: recyclarr
@@ -514,7 +514,7 @@ services:
     environment:
       - TZ=Europe/London
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=http://apprise:8000/notify?tag=updates
+      - WATCHTOWER_NOTIFICATION_URL=generic+http://apprise:8000/notify?tag=updates
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info        # startup + updates + warnings/errors
       - WATCHTOWER_NOTIFICATION_REPORT=true        # send a summary every run (even 0 updates)
       - WATCHTOWER_NOTIFICATION_TITLE_TAG=watchtower@mediaserver
@@ -525,8 +525,7 @@ services:
       - WATCHTOWER_INCLUDE_STOPPED=true            # scan stopped containers for image updates
     command: >
       --cleanup
-      --rolling-restart
-      --stop-timeout 60s
+            --stop-timeout 60s
       --schedule "0 0 4 * * *"
     restart: unless-stopped
 
@@ -664,22 +663,31 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - ALLOWED_USERS=${ALLOWED_USERS:-}
       - LOG_LEVEL=INFO
+      - SONARR_API_KEY=${HOMEPAGE_VAR_SONARR_API_KEY}
+      - RADARR_API_KEY=${HOMEPAGE_VAR_RADARR_API_KEY}
+      - SABNZBD_API_KEY=${HOMEPAGE_VAR_SAB_API_KEY}
+      - PROWLARR_API_KEY=${PROWLARR_API_KEY}
+      - TAUTULLI_API_KEY=${HOMEPAGE_VAR_TAUTULLI_API_KEY}
     volumes:
       - /var/log:/var/log:ro
       - /opt/mediaserver:/opt/mediaserver:ro
       - /mnt/storage:/mnt/storage:ro
       - /opt/mediaserver/discord-bot/logs:/app/logs
+    ports:
+      - "9999:9999"
     networks:
       - default
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "wud.watch=true"
     healthcheck:
-      test: ["CMD", "python3", "-c", "import os; exit(0 if os.path.exists('/app/logs/bot.log') else 1)"]
+      test: ["CMD", "curl", "-f", "http://localhost:9999/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
 
 volumes:
   borg-cache:

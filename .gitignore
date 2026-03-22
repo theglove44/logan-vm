@@ -102,3 +102,4 @@ tautulli/
 wud/
 discord-bot/.env
 discord-bot/venv/
+caddy/data/
